@@ -12,7 +12,8 @@ import org.xml.sax.SAXException;
 
 public class XMLValidator {
 
-	public void XMLBienFormado(String documento) {
+	public Document XMLBienFormado(String documento) {
+		Document doc = null;
 		try {
 			DocumentBuilderFactory factoria = DocumentBuilderFactory
 					.newInstance();
@@ -22,7 +23,7 @@ public class XMLValidator {
 			DocumentBuilder builder = factoria.newDocumentBuilder();
 			builder.setErrorHandler(new SimpleErrorHandler());
 
-			builder.parse(new InputSource(documento));
+			doc = builder.parse(new InputSource(documento));
 			System.out.println("El xml está bien formado");
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -31,6 +32,7 @@ public class XMLValidator {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return doc;
 	}
 
 	public void XmlDtd(String documento) {
