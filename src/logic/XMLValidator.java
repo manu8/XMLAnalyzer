@@ -91,10 +91,4 @@ public class XMLValidator {
 			System.out.println("Documento no encontrado");
 		}
 	}
-	public static void main(String[] args) {
-		XMLValidator xml = new XMLValidator();
-		xml.XMLBienFormado("document.xml");
-		xml.XmlDtd("document.xml");
-		xml.XmlSchema("document.xml");
-	}
 }
