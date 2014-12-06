@@ -1,4 +1,4 @@
-package xmlAnalyze;
+package ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
-public class Interfaz extends JFrame{
+public class GUI extends JFrame{
 	
 	//ATRIBUTOS***************
 	private JPanel contentPane;
@@ -55,7 +55,7 @@ public class Interfaz extends JFrame{
 	
 	
 	//CONSTRUCTOR*************
-	public Interfaz() {
+	public GUI() {
 		
 
 		
