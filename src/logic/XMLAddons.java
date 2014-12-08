@@ -17,12 +17,25 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import javax.xml.xquery.XQConnection;
+import javax.xml.xquery.XQDataSource;
+import javax.xml.xquery.XQException;
+import javax.xml.xquery.XQPreparedExpression;
+import javax.xml.xquery.XQSequence;
+
+import net.sf.saxon.xqj.SaxonXQDataSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class XMLAddons {
+	/**
+	 * Ejecuta una expresión XPath dentro del contexto de un documento XML
+	 * @param expression - Expresión XPath
+	 * @param document - Documento XML
+	 * @return NodeList con los nodos resultantes de ejecutar la expresión
+	 */
 	public static NodeList executeXPathExpression(String expression, Document document) {
 		NodeList nodes = null;
 		try {
@@ -34,16 +47,29 @@ public class XMLAddons {
 		return nodes;
 	}
 	
-	public static void executeXQueryExpresion(String expression, InputSource source) {
-		FileInputStream query = null;
+	public static void executeXQueryExpresion(String expression) {
+		XQDataSource ds = new SaxonXQDataSource();
 		try {
-			query = new FileInputStream(expression);
-		} catch (FileNotFoundException e) {
+			XQConnection conn = ds.getConnection();
+			XQPreparedExpression expr = conn.prepareExpression(expression);
+			XQSequence rs = expr.executeQuery();
+			System.out.println(rs.getSequenceAsString(null));
+			rs.close();
+			conn.close();
+			expr.close();
+			conn.close();
+		} catch (XQException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Transforma un documento XML en un archivo generado mediante una hoja de transformación XSLT
+	 * @param xlstpath - Ruta de la hoja de transformación XSLT
+	 * @param outpath - Ruta donde generar el fichero resultante (incluido el propio fichero)
+	 * @param document - Documento XML
+	 */
 	public static void transformXMLWithXSLT(String xlstpath, String outpath, Document document) {
 		File stylesheet = null;
 		if(xlstpath != ""){
