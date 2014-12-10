@@ -11,7 +11,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class XMLValidator {
-
+	/**
+	 * Método que comprueba que el xml está bien formado
+	 * @param documento Ruta del xml que queremos comprobar
+	 * @return Document
+	 */
 	public Document XMLBienFormado(String documento) {
 		Document doc = null;
 		try {
@@ -34,7 +38,10 @@ public class XMLValidator {
 		}
 		return doc;
 	}
-
+	/**
+	 * Método que comprueba que el xml valida contra el DTD
+	 * @param documento Ruta del xml que queremos comprobar
+	 */
 	public void XmlDtd(String documento) {
 		DocumentBuilderFactory factoria = DocumentBuilderFactory.newInstance();
 		factoria.setValidating(true);
@@ -64,6 +71,10 @@ public class XMLValidator {
 		}
 	}
 
+	/**
+	 * Método que comprueba que el xml valida contra el XSD
+	 * @param documento Ruta del xml que queremos comprobar
+	 */
 	public void XmlSchema(String documento){
 		DocumentBuilderFactory factoria = DocumentBuilderFactory.newInstance();
 		factoria.setValidating(true);
