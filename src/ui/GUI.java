@@ -1,11 +1,9 @@
-package xmlAnalyze;
+package ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Insets;
-import java.awt.SystemColor;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -21,9 +19,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
 
-public class Interfaz extends JFrame{
+public class GUI extends JFrame{
 	
 	//ATRIBUTOS***************
 	private JPanel contentPane;
@@ -55,7 +52,7 @@ public class Interfaz extends JFrame{
 	
 	
 	//CONSTRUCTOR*************
-	public Interfaz() {
+	public GUI() {
 		
 
 		
@@ -72,7 +69,7 @@ public class Interfaz extends JFrame{
 		
 		//LOGOTIPO
 		logo = new JLabel("");
-		logo.setIcon(new ImageIcon("E:\\DAW2014\\3DAM\\1TRIMESTRE\\PROYECTOS DAM\\Mis_Workspaces\\workspace_XMLanalize\\XML_analyze\\img\\logoXML.png"));
+		logo.setIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\logoXML.png"));
 		logo.setBackground(Color.WHITE);
 		logo.setBounds(35, 23, 184, 89);
 		contentPane.add(logo);
@@ -100,16 +97,16 @@ public class Interfaz extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		bt_XML.setSelectedIcon(new ImageIcon("E:\\DAW2014\\3DAM\\1TRIMESTRE\\PROYECTOS DAM\\Mis_Workspaces\\workspace_XMLanalize\\XML_analyze\\img\\bt1-2.jpg"));
+		bt_XML.setSelectedIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt1-2.jpg"));
 		bt_XML.setBackground(new Color(154, 205, 50));
-		bt_XML.setIcon(new ImageIcon("E:\\DAW2014\\3DAM\\1TRIMESTRE\\PROYECTOS DAM\\Mis_Workspaces\\workspace_XMLanalize\\XML_analyze\\img\\bt1.jpg"));
+		bt_XML.setIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt1.jpg"));
 		bt_XML.setBounds(574, 23, 99, 89);
 		bt_XML.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		contentPane.add(bt_XML);
 		
 		//BOTÓN VALIDAR DTD
 		bt_DTD = new JButton("");
-		bt_DTD.setIcon(new ImageIcon("E:\\DAW2014\\3DAM\\1TRIMESTRE\\PROYECTOS DAM\\Mis_Workspaces\\workspace_XMLanalize\\XML_analyze\\img\\bt2.jpg"));
+		bt_DTD.setIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt2.jpg"));
 		bt_DTD.setBackground(new Color(154, 205, 50));
 		bt_DTD.setBounds(683, 23, 99, 89);
 		bt_DTD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -117,7 +114,7 @@ public class Interfaz extends JFrame{
 		
 		//BOTÓN VALIDAR XSD
 		bt_XSD = new JButton("");
-		bt_XSD.setIcon(new ImageIcon("E:\\DAW2014\\3DAM\\1TRIMESTRE\\PROYECTOS DAM\\Mis_Workspaces\\workspace_XMLanalize\\XML_analyze\\img\\bt3.jpg"));
+		bt_XSD.setIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt3.jpg"));
 		bt_XSD.setBackground(new Color(154, 205, 50));
 		bt_XSD.setBounds(792, 23, 99, 89);
 		bt_XSD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
