@@ -1,8 +1,6 @@
 package logic;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -18,6 +16,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xquery.XQConnection;
+import javax.xml.xquery.XQConstants;
 import javax.xml.xquery.XQDataSource;
 import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
@@ -27,7 +26,6 @@ import net.sf.saxon.xqj.SaxonXQDataSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 public class XMLAddons {
 	/**
@@ -37,9 +35,10 @@ public class XMLAddons {
 	 * @return NodeList con los nodos resultantes de ejecutar la expresión
 	 */
 	public static NodeList executeXPathExpression(String expression, Document document) {
-		NodeList nodes = null;
+		NodeList nodes = null; //Lista de nodos resultante de ejecutar la expresión XPath
 		try {
-			nodes = (NodeList) XPathFactory.newInstance().newXPath().evaluate(expression, document, XPathConstants.NODESET);
+			//Realiza la búsqueda de nodos dada la expresión XPath
+			nodes = (NodeList) XPathFactory.newInstance().newXPath().evaluate(expression, document, XPathConstants.NODESET); 
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -47,11 +46,12 @@ public class XMLAddons {
 		return nodes;
 	}
 	
-	public static void executeXQueryExpresion(String expression) {
+	public static void executeXQueryExpresion(String expression, Document document) {
 		XQDataSource ds = new SaxonXQDataSource();
 		try {
 			XQConnection conn = ds.getConnection();
 			XQPreparedExpression expr = conn.prepareExpression(expression);
+			expr.bindNode(XQConstants.CONTEXT_ITEM, document, null);
 			XQSequence rs = expr.executeQuery();
 			System.out.println(rs.getSequenceAsString(null));
 			rs.close();
@@ -69,19 +69,21 @@ public class XMLAddons {
 	 * @param xlstpath - Ruta de la hoja de transformación XSLT
 	 * @param outpath - Ruta donde generar el fichero resultante (incluido el propio fichero)
 	 * @param document - Documento XML
+	 * @return Objeto File del documento generado
 	 */
-	public static void transformXMLWithXSLT(String xlstpath, String outpath, Document document) {
-		File stylesheet = null;
+	public static File transformXMLWithXSLT(String xlstpath, String outpath, Document document) {
+		File stylesheet = null; //Hoja de transformación XSLT
+		Result out = null; //Resultado de la transformación
 		if(xlstpath != ""){
 			stylesheet = new File(xlstpath);
 		}
-		StreamSource stylesource = new StreamSource(stylesheet);
-		Source source = new DOMSource(document);
-		Result out = new StreamResult(new File(outpath));
+		StreamSource stylesource = new StreamSource(stylesheet); //Stream del XSLT
+		Source source = new DOMSource(document); //Fichero origen a transformar
+		out = new StreamResult(new File(outpath)); //Stream del fichero resultante
 		try {
-			Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesource);
+			Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesource); //Transformador de XSLT
 			try {
-				transformer.transform(source, out);
+				transformer.transform(source, out); //Transformación del documento XML
 			} catch (TransformerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -93,5 +95,6 @@ public class XMLAddons {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return (File) out;
 	}
 }

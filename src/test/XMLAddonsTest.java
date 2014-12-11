@@ -16,6 +16,7 @@ public class XMLAddonsTest {
 		}
 		
 		XMLAddons.transformXMLWithXSLT("assets/samples/Stylesheet.xsl", "src/test/Generated Files/generated.html", doc);
+		
+		XMLAddons.executeXQueryExpresion("for $contact in doc('assets/contacts.xml')/contacts/contact where $contact/firstname == 'Edwin' return $contact/lastname", doc);
 	}
-
 }
