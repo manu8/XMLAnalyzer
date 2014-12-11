@@ -22,7 +22,7 @@ import javax.swing.JTabbedPane;
 
 public class GUI extends JFrame{
 	
-	//ATRIBUTOS***************
+	//ATRIBUTOS*****************
 	private JPanel contentPane;
 	private JPanel panelJTree;
 	
