@@ -45,21 +45,33 @@ public class GUI extends JFrame{
 	private JTabbedPane PanelPestanias;	
 	private JPanel pestania_1;
 	private JPanel pestania_2;
+	private JPanel pestania_3;
 	
 	private JTextArea textArea_XML;
 	private JTextArea textArea_XML_BienFormado;
 	private JScrollPane scrollPane_XML;
+	private JScrollPane scrollPane_XSLT;
 	
 	private JTextArea textArea_XSLT;
 	
 	private JButton bt_Editar;
 	private JButton bt_Ejecutar;
 	private JButton bt_Mostrar;
+	
+	private JTextArea textArea_Expresiones;
+	private JScrollPane scrollPane_Expresiones;
+	private JButton bt_EjecutarXpath;
+	private JButton bt_EjecutarXquery;
+	private JButton bt_CargarXquery;
+	
 	private JLabel pie;
+	
+
+	
 
 
 	
-	//CONSTRUCTOR**************
+	//CONSTRUCTOR*************
 	public GUI() {
 
 		
@@ -69,7 +81,7 @@ public class GUI extends JFrame{
 		
 		//BOTON ABRIR ARCHIVO
 		bt_Abrir = new JButton("Abrir archivo");
-		bt_Abrir.setForeground(Color.WHITE);
+		bt_Abrir.setForeground(new Color(154, 205, 50));
 		bt_Abrir.setFont(new Font("Consolas", Font.BOLD, 12));
 		bt_Abrir.setBackground(Color.DARK_GRAY);
 		
@@ -152,7 +164,25 @@ public class GUI extends JFrame{
 		tree = new JTree();
 		tree.setFont(new Font("Consolas", Font.PLAIN, 12));
 		tree.setBounds(10, 11, 163, 472);
+		
+		
+		
+		
+		
+		
+		
 		panelJTree.add(tree);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 //***************** BOTONES GRANDES *******************		
@@ -209,7 +239,6 @@ public class GUI extends JFrame{
 		//--PESTAÑA 1************
 		pestania_1 = new JPanel();
 		pestania_1.setBackground(new Color(154, 205, 50));
-		//tabbedPane.addTab("Cita", new ImageIcon("C:\\Users\\ANDU\\Desktop\\img\\cita.png"), pestaña1, null);
 		PanelPestanias.addTab("XML", null, pestania_1, null);
 		pestania_1.setLayout(null);
 		
@@ -241,18 +270,24 @@ public class GUI extends JFrame{
 		//--PESTAÑA 2************
 		pestania_2 = new JPanel();
 		pestania_2.setBackground(new Color(154, 205, 50));
-		//tabbedPane.addTab("Cita", new ImageIcon("C:\\Users\\ANDU\\Desktop\\img\\cita.png"), pestaña1, null);
 		PanelPestanias.addTab("XSLT", null, pestania_2, null);
 		pestania_2.setLayout(null);
 			
 		
 		textArea_XSLT = new JTextArea();
 		textArea_XSLT.setText("Aquí mostramos el código XSLT...");
+		textArea_XSLT.setFont(new Font("Consolas", Font.PLAIN, 15));
 		textArea_XSLT.setBounds(25, 56, 573, 377);
-		pestania_2.add(textArea_XSLT);
+		textArea_XSLT.setMargin(new Insets(10, 10, 10, 10)); //margen de alrededor
+		textArea_XSLT.setLineWrap(true); // q baje para abajo cuando llegues al final
+		textArea_XSLT.setWrapStyleWord(true);  //para q no corte las palabra
+		//pestania_2.add(textArea_XSLT);
 		
-		
-		
+		scrollPane_XSLT = new JScrollPane();
+		scrollPane_XSLT.setBounds(25, 56, 573, 377);
+		scrollPane_XSLT.setViewportView(textArea_XSLT); //Añadir el Scroll al TextArea
+		pestania_2.add(scrollPane_XSLT);
+
 		bt_Editar = new JButton("EDITAR");
 		
 		bt_Editar.addActionListener(new ActionListener() {
@@ -285,10 +320,73 @@ public class GUI extends JFrame{
 		bt_Mostrar.setBounds(509, 11, 89, 23);
 		pestania_2.add(bt_Mostrar);
 		
+
+		
+		//--PESTAÑA 3************
+		pestania_3 = new JPanel();
+		pestania_3.setBackground(new Color(154, 205, 50));
+		PanelPestanias.addTab("Expresiones", null, pestania_3, null);
+		pestania_3.setLayout(null);
+		
+		textArea_Expresiones = new JTextArea();
+		textArea_Expresiones.setBounds(28, 69, 570, 359);
+		textArea_Expresiones.setText("Aquí mostramos el código...");
+		textArea_Expresiones.setFont(new Font("Consolas", Font.PLAIN, 15));
+		textArea_Expresiones.setMargin(new Insets(10, 10, 10, 10)); //margen de alrededor
+		textArea_Expresiones.setLineWrap(true); // q baje para abajo cuando llegues al final
+		textArea_Expresiones.setWrapStyleWord(true);  //para q no corte las palabra
+		//pestania_3.add(textArea_Expresiones);
+		
+		scrollPane_Expresiones = new JScrollPane();
+		scrollPane_Expresiones.setBounds(28, 69, 570, 359);
+		scrollPane_Expresiones.setViewportView(textArea_Expresiones); //Añadir el Scroll al TextArea
+		pestania_3.add(scrollPane_Expresiones);
+		
+		
+		//--BOTON EJECUTAR PATH
+		bt_EjecutarXpath = new JButton("EJECUTAR XPath");
+		bt_EjecutarXpath.setBounds(28, 21, 147, 23);
+		bt_EjecutarXpath.setForeground(Color.WHITE);
+		bt_EjecutarXpath.setBackground(Color.DARK_GRAY);
+		bt_EjecutarXpath.setFont(new Font("Consolas", Font.BOLD, 12));
+		pestania_3.add(bt_EjecutarXpath);
+		
+		//--BOTON EJECUTAR XQUERY
+		bt_EjecutarXquery = new JButton("EJECUTAR XQuery");
+		bt_EjecutarXquery.setBounds(286, 21, 147, 23);
+		bt_EjecutarXquery.setForeground(Color.WHITE);
+		bt_EjecutarXquery.setBackground(Color.DARK_GRAY);
+		bt_EjecutarXquery.setFont(new Font("Consolas", Font.BOLD, 12));
+		pestania_3.add(bt_EjecutarXquery);
+		
+		//--BOTON EJECUTAR CARGAR XQUERY
+		bt_CargarXquery = new JButton("CARGAR XQuery");
+		bt_CargarXquery.setBounds(468, 21, 130, 23);
+		bt_CargarXquery.setForeground(Color.WHITE);
+		bt_CargarXquery.setBackground(Color.DARK_GRAY);
+		bt_CargarXquery.setFont(new Font("Consolas", Font.BOLD, 12));
+		pestania_3.add(bt_CargarXquery);
+		
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//--PIE
 		pie = new JLabel("2\u00BA DAM  |  2014");
 		pie.setFont(new Font("Consolas", Font.PLAIN, 12));
 		pie.setForeground(new Color(154, 205, 50));
-		pie.setBounds(789, 637, 105, 13);
+		pie.setBounds(786, 642, 105, 13);
 		contentPane.add(pie);
 
 	}

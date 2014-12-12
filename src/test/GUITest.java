@@ -12,7 +12,7 @@ public class GUITest {
 				try {
 					GUI frame = new GUI();
 					frame.setVisible(true);
-					frame.setSize(950, 700);
+					frame.setSize(950, 730);
 					frame.setResizable(false);
 					
 				} catch (Exception e) {
