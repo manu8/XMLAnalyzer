@@ -59,7 +59,7 @@ public class GUI extends JFrame{
 
 
 	
-	//CONSTRUCTOR*************
+	//CONSTRUCTOR**************
 	public GUI() {
 
 		
