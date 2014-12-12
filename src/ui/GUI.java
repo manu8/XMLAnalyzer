@@ -9,7 +9,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JTree;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
@@ -17,6 +19,7 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 import javax.swing.JTabbedPane;
 
@@ -25,6 +28,11 @@ public class GUI extends JFrame{
 	//ATRIBUTOS*****************
 	private JPanel contentPane;
 	private JPanel panelJTree;
+	
+	private JMenuBar menuBar;
+	private JFileChooser archivoX;
+	private JPanel ventana;
+	private JButton bt_Abrir;
 	
 	private JLabel logo;
 	private JTree tree;
@@ -49,14 +57,71 @@ public class GUI extends JFrame{
 	private JButton bt_Mostrar;
 	private JLabel pie;
 
-	
+
 	
 	//CONSTRUCTOR*************
 	public GUI() {
-		
 
 		
-		//getContentPane().setLayout(null);
+		//BARRA SUPERIOR
+		menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		//BOTON ABRIR ARCHIVO
+		bt_Abrir = new JButton("Abrir archivo");
+		bt_Abrir.setForeground(Color.WHITE);
+		bt_Abrir.setFont(new Font("Consolas", Font.BOLD, 12));
+		bt_Abrir.setBackground(Color.DARK_GRAY);
+		
+		bt_Abrir.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+				//--VENTANA EMERJENTE PARA SELECCIONAR ARCHIVO
+				ventana = new JPanel();
+				//ventana.setBounds(0, 0, 934, 661);
+				ventana.setSize(500, 500);
+				ventana.add(archivoX);
+				setContentPane(ventana);
+				
+			}
+		});
+		menuBar.add(bt_Abrir);
+		
+		//-----------------------
+		
+		//------EL ARCHIVO /////////////////////////////////////////////	
+		archivoX = new JFileChooser();
+		archivoX.setBounds(340, 43, 512, 356);
+		archivoX.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+				String command = arg0.getActionCommand();
+				 if(command.equals(JFileChooser.APPROVE_SELECTION)){
+					 
+					 File selectedFile = archivoX.getSelectedFile();
+					 
+					 textArea_XML.add(archivoX);
+					 
+					 //selectedFile.getParent();
+					 //selectedFile.getName();
+					 
+				 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+					 
+				 }
+			}
+		});
+		
+		//////////////////////////////////////////////////////////////
+		
+		
+
+		//-------------------------
 		
 		//PANEL CONTENEDOR
 		contentPane = new JPanel();
@@ -90,11 +155,21 @@ public class GUI extends JFrame{
 		panelJTree.add(tree);
 		
 		
-//***************** BOTONES *******************		
-		//BOTÓN CARGAR XML
+//***************** BOTONES GRANDES *******************		
+
+		
+		//BOTÓN CARGAR XML////////////////////////////////////////////////////////
 		bt_XML = new JButton("");
 		bt_XML.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				//new ControlArchivo().LeerArchivo(textArea_XML);
+
+				
+				//textArea_XML_BienFormado.setText("CÓDIGO BIEN FORMADO !!!");
+				
+				
 			}
 		});
 		bt_XML.setSelectedIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt1-2.jpg"));
@@ -152,8 +227,7 @@ public class GUI extends JFrame{
 		scrollPane_XML.setViewportView(textArea_XML); //Añadir el Scroll al TextArea
 		pestania_1.add(scrollPane_XML);
 		
-		
-		
+			
 		textArea_XML_BienFormado = new JTextArea();
 		textArea_XML_BienFormado.setBackground(Color.DARK_GRAY);
 		textArea_XML_BienFormado.setForeground(Color.GREEN);
@@ -162,10 +236,6 @@ public class GUI extends JFrame{
 		textArea_XML_BienFormado.setBounds(21, 366, 579, 68);
 		textArea_XML_BienFormado.setMargin(new Insets(25, 50, 10, 10)); //margen de alrededor
 		pestania_1.add(textArea_XML_BienFormado);
-		
-
-
-		
 		
 		
 		//--PESTAÑA 2************
@@ -182,20 +252,34 @@ public class GUI extends JFrame{
 		pestania_2.add(textArea_XSLT);
 		
 		
+		
 		bt_Editar = new JButton("EDITAR");
-		bt_Editar.setForeground(Color.DARK_GRAY);
+		
+		bt_Editar.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		
+		
+		bt_Editar.setForeground(Color.WHITE);
 		bt_Editar.setFont(new Font("Consolas", Font.BOLD, 12));
 		bt_Editar.setBackground(Color.DARK_GRAY);
-		bt_Editar.setBounds(284, 11, 89, 23);
+		bt_Editar.setBounds(277, 11, 89, 23);
 		pestania_2.add(bt_Editar);
 		
 		bt_Ejecutar = new JButton("EJECUTAR");
+		bt_Ejecutar.setForeground(Color.WHITE);
 		bt_Ejecutar.setBackground(Color.DARK_GRAY);
 		bt_Ejecutar.setFont(new Font("Consolas", Font.BOLD, 12));
-		bt_Ejecutar.setBounds(395, 11, 89, 23);
+		bt_Ejecutar.setBounds(389, 11, 95, 23);
 		pestania_2.add(bt_Ejecutar);
 		
 		bt_Mostrar = new JButton("MOSTRAR");
+		bt_Mostrar.setForeground(Color.WHITE);
 		bt_Mostrar.setBackground(Color.DARK_GRAY);
 		bt_Mostrar.setFont(new Font("Consolas", Font.BOLD, 12));
 		bt_Mostrar.setBounds(509, 11, 89, 23);
@@ -206,35 +290,6 @@ public class GUI extends JFrame{
 		pie.setForeground(new Color(154, 205, 50));
 		pie.setBounds(789, 637, 105, 13);
 		contentPane.add(pie);
-		
 
-		
-
-		
-
-		
-		
-		
-
-		
-
-		
-	/**	
-		
-		//---FORMATOS PARA BOTÓN
-		btPasarConsulta = new JButton("SIGUIENTE CONSULTA");
-		btPasarConsulta.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btPasarConsulta.setForeground(Color.WHITE);
-		btPasarConsulta.setIcon(new ImageIcon("H:\\ProyectoJavaPen - PROYECTOfinal\\PROYECTOfinal_VETERINARIOS\\img\\siguiente.png"));
-		btPasarConsulta.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 13));
-		btPasarConsulta.setBackground(new Color(0, 0, 139));
-		btPasarConsulta.setBounds(754, 0, 209, 35);
-		contentPane.add(btPasarConsulta);
-	**/	
-		
-		
-
-		
-	
 	}
 }
