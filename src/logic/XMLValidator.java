@@ -10,6 +10,11 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * Validador del documento XML, provee acceso a dicho documento
+ * @author Jose María Pérez Maroto
+ *
+ */
 public class XMLValidator {
 	/**
 	 * Método que comprueba que el xml está bien formado
@@ -98,7 +103,7 @@ public class XMLValidator {
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			System.out.println("El documento no ha validado correctamente drente al Schema");
+			System.out.println("El documento no ha validado correctamente frente al Schema");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
