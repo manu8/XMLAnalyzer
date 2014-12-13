@@ -9,9 +9,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
@@ -20,14 +22,27 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 import javax.swing.JTabbedPane;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import logic.XMLAddons;
+import logic.XMLValidator;
 
 /**
  * Provee de la interfaz de usuario
  * @author Andrés Moreno Aguilar
  */
 public class GUI extends JFrame{
+	private final String XML = "XML";
+	private final String XSLT = "XSLT";
+	private final String FileGenerated = "GENERATED";
 	
 	//ATRIBUTOS*****************
 	private JPanel contentPane;
@@ -36,7 +51,6 @@ public class GUI extends JFrame{
 	private JMenuBar menuBar;
 	private JFileChooser archivoX;
 	private JPanel ventana;
-	private JButton bt_Abrir;
 	
 	private JLabel logo;
 	private JTree tree;
@@ -58,6 +72,8 @@ public class GUI extends JFrame{
 	
 	private JTextArea textArea_XSLT;
 	
+	private JButton bt_Guardar;
+	
 	private JButton bt_Editar;
 	private JButton bt_Ejecutar;
 	private JButton bt_Mostrar;
@@ -71,72 +87,16 @@ public class GUI extends JFrame{
 	private JLabel pie;
 	
 
-	
+	private File xmlFile = new File("assets\\samples\\contacts.xml");
+	private File xslFile = new File("assets\\samples\\Stylesheet.xsl");
+	private File generatedFile;
+	private final  XMLValidator validator = new XMLValidator();
+	private Document doc;
 
 
 	
 	//CONSTRUCTOR*************
 	public GUI() {
-
-		
-		//BARRA SUPERIOR
-		menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-		
-		//BOTON ABRIR ARCHIVO
-		bt_Abrir = new JButton("Abrir archivo");
-		bt_Abrir.setForeground(new Color(154, 205, 50));
-		bt_Abrir.setFont(new Font("Consolas", Font.BOLD, 12));
-		bt_Abrir.setBackground(Color.DARK_GRAY);
-		
-		bt_Abrir.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-				//--VENTANA EMERJENTE PARA SELECCIONAR ARCHIVO
-				ventana = new JPanel();
-				//ventana.setBounds(0, 0, 934, 661);
-				ventana.setSize(500, 500);
-				ventana.add(archivoX);
-				setContentPane(ventana);
-				
-			}
-		});
-		menuBar.add(bt_Abrir);
-		
-		//-----------------------
-		
-		//------EL ARCHIVO /////////////////////////////////////////////	
-		archivoX = new JFileChooser();
-		archivoX.setBounds(340, 43, 512, 356);
-		archivoX.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-				String command = arg0.getActionCommand();
-				 if(command.equals(JFileChooser.APPROVE_SELECTION)){
-					 
-					 File selectedFile = archivoX.getSelectedFile();
-					 
-					 textArea_XML.add(archivoX);
-					 
-					 //selectedFile.getParent();
-					 //selectedFile.getName();
-					 
-				 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
-					 
-				 }
-			}
-		});
-		
-		//////////////////////////////////////////////////////////////
-		
-		
-
 		//-------------------------
 		
 		//PANEL CONTENEDOR
@@ -150,7 +110,7 @@ public class GUI extends JFrame{
 		
 		//LOGOTIPO
 		logo = new JLabel("");
-		logo.setIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\logoXML.png"));
+		logo.setIcon(new ImageIcon("assets\\img\\logoXML.png"));
 		logo.setBackground(Color.WHITE);
 		logo.setBounds(35, 23, 184, 89);
 		contentPane.add(logo);
@@ -162,32 +122,7 @@ public class GUI extends JFrame{
 		panelJTree.setBounds(36, 132, 183, 494);
 		panelJTree.setBackground(new Color(154, 205, 50));
 		contentPane.add(panelJTree);
-		panelJTree.setLayout(null);
-		
-		//JTREE
-		tree = new JTree();
-		tree.setFont(new Font("Consolas", Font.PLAIN, 12));
-		tree.setBounds(10, 11, 163, 472);
-		
-		
-		
-		
-		
-		
-		
-		panelJTree.add(tree);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		panelJTree.setLayout(null);		
 		
 //***************** BOTONES GRANDES *******************		
 
@@ -195,38 +130,74 @@ public class GUI extends JFrame{
 		//BOTÓN CARGAR XML////////////////////////////////////////////////////////
 		bt_XML = new JButton("");
 		bt_XML.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				
-				//new ControlArchivo().LeerArchivo(textArea_XML);
-
-				
-				//textArea_XML_BienFormado.setText("CÓDIGO BIEN FORMADO !!!");
-				
+			public void actionPerformed(ActionEvent arg0) {				
+				if(xmlFile == null){
+					ventana = new JPanel();
+					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
+					//------EL ARCHIVO /////////////////////////////////////////////	
+					archivoX = new JFileChooser();
+					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
+					ventana.add(archivoX);
+					setContentPane(ventana);
+					archivoX.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent arg0) {							
+							String command = arg0.getActionCommand();
+							 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
+								 xmlFile = archivoX.getSelectedFile();
+								 readFile(xmlFile, XML);
+								 setContentPane(contentPane);								 
+							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+								 setContentPane(contentPane);
+							 }
+						}
+					});
+				} else {
+					readFile(xmlFile, XML);
+					setContentPane(contentPane);
+				}
 				
 			}
 		});
-		bt_XML.setSelectedIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt1-2.jpg"));
+		bt_XML.setSelectedIcon(new ImageIcon("assets\\img\\bt1-2.jpg"));
 		bt_XML.setBackground(new Color(154, 205, 50));
-		bt_XML.setIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt1.jpg"));
+		bt_XML.setIcon(new ImageIcon("assets\\img\\bt1.jpg"));
 		bt_XML.setBounds(574, 23, 99, 89);
 		bt_XML.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		contentPane.add(bt_XML);
 		
 		//BOTÓN VALIDAR DTD
 		bt_DTD = new JButton("");
-		bt_DTD.setIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt2.jpg"));
+		bt_DTD.setIcon(new ImageIcon("assets\\img\\bt2.jpg"));
 		bt_DTD.setBackground(new Color(154, 205, 50));
 		bt_DTD.setBounds(683, 23, 99, 89);
 		bt_DTD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		bt_DTD.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textArea_XML_BienFormado.setText(validator.XmlDtd(xmlFile.getAbsolutePath()));
+				if(textArea_XML_BienFormado.getText().contains("no")){
+					textArea_XML_BienFormado.setForeground(Color.RED);
+				}
+			}
+		});
 		contentPane.add(bt_DTD);
 		
 		//BOTÓN VALIDAR XSD
 		bt_XSD = new JButton("");
-		bt_XSD.setIcon(new ImageIcon("..\\XML_analyze\\assets\\img\\bt3.jpg"));
+		bt_XSD.setIcon(new ImageIcon("assets\\img\\bt3.jpg"));
 		bt_XSD.setBackground(new Color(154, 205, 50));
 		bt_XSD.setBounds(792, 23, 99, 89);
 		bt_XSD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		bt_DTD.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textArea_XML_BienFormado.setText(validator.XmlSchema(xmlFile.getAbsolutePath()));
+				if(textArea_XML_BienFormado.getText().contains("no")){
+					textArea_XML_BienFormado.setForeground(Color.RED);
+				}
+			}
+		});
 		contentPane.add(bt_XSD);
 		
 
@@ -247,25 +218,49 @@ public class GUI extends JFrame{
 		pestania_1.setLayout(null);
 		
 		textArea_XML = new JTextArea();
+		textArea_XML.setEditable(false);
 		textArea_XML.setFont(new Font("Consolas", Font.PLAIN, 15));
 		textArea_XML.setText("Aquí mostramos el código XML...");
-		textArea_XML.setBounds(21, 21, 579, 319);
+		textArea_XML.setBounds(25, 56, 573, 305);
 		textArea_XML.setMargin(new Insets(10, 10, 10, 10)); //margen de alrededor
 		textArea_XML.setLineWrap(true); // q baje para abajo cuando llegues al final
 		textArea_XML.setWrapStyleWord(true);  //para q no corte las palabra
 		//pestania_1.add(textArea_XML);
+		bt_Guardar = new JButton("GUARDAR");		
+		bt_Guardar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String text = textArea_XML.getText();
+				try {
+					PrintWriter writer = new PrintWriter(xmlFile);
+					writer.print(text);
+					writer.close();
+					readFile(xmlFile, XML);
+					setContentPane(contentPane);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});		
+		
+		bt_Guardar.setForeground(Color.WHITE);
+		bt_Guardar.setFont(new Font("Consolas", Font.BOLD, 12));
+		bt_Guardar.setBackground(Color.DARK_GRAY);
+		bt_Guardar.setBounds(277, 11, 89, 23);
+		pestania_1.add(bt_Guardar);
 		
 		scrollPane_XML = new JScrollPane();
-		scrollPane_XML.setBounds(21, 21, 579, 319);
+		scrollPane_XML.setBounds(25, 56, 573, 305);
 		scrollPane_XML.setViewportView(textArea_XML); //Añadir el Scroll al TextArea
 		pestania_1.add(scrollPane_XML);
 		
 			
 		textArea_XML_BienFormado = new JTextArea();
+		textArea_XML_BienFormado.setEditable(false);
 		textArea_XML_BienFormado.setBackground(Color.DARK_GRAY);
 		textArea_XML_BienFormado.setForeground(Color.GREEN);
 		textArea_XML_BienFormado.setFont(new Font("Consolas", Font.BOLD, 16));
-		textArea_XML_BienFormado.setText("CÓDIGO BIEN FORMADO !!!");
 		textArea_XML_BienFormado.setBounds(21, 366, 579, 68);
 		textArea_XML_BienFormado.setMargin(new Insets(25, 50, 10, 10)); //margen de alrededor
 		pestania_1.add(textArea_XML_BienFormado);
@@ -291,15 +286,21 @@ public class GUI extends JFrame{
 		scrollPane_XSLT.setBounds(25, 56, 573, 377);
 		scrollPane_XSLT.setViewportView(textArea_XSLT); //Añadir el Scroll al TextArea
 		pestania_2.add(scrollPane_XSLT);
-
-		bt_Editar = new JButton("EDITAR");
-		
-		bt_Editar.addActionListener(new ActionListener() {
-			
+		bt_Editar = new JButton("GUARDAR");		
+		bt_Editar.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-
+				String text = textArea_XSLT.getText();
+				try {
+					PrintWriter writer = new PrintWriter(xslFile);
+					writer.print(text);
+					writer.close();
+					readFile(xslFile, XSLT);
+					setContentPane(contentPane);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -315,6 +316,39 @@ public class GUI extends JFrame{
 		bt_Ejecutar.setBackground(Color.DARK_GRAY);
 		bt_Ejecutar.setFont(new Font("Consolas", Font.BOLD, 12));
 		bt_Ejecutar.setBounds(389, 11, 95, 23);
+		bt_Ejecutar.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(generatedFile == null){
+					ventana = new JPanel();
+					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
+					//------EL ARCHIVO /////////////////////////////////////////////	
+					archivoX = new JFileChooser();
+					archivoX.setDialogTitle("Eliga un directorio para generar el fichero...");
+					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
+					ventana.add(archivoX);
+					setContentPane(ventana);
+					archivoX.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent arg0) {							
+							String command = arg0.getActionCommand();
+							 if(command.equals(JFileChooser.APPROVE_SELECTION)){
+								 String outpath = "";
+								 outpath = archivoX.getSelectedFile().getAbsolutePath(); 
+								 generatedFile = XMLAddons.transformXMLWithXSLT(xslFile.getAbsolutePath(), outpath, doc);
+								 readFile(generatedFile, FileGenerated);
+								 setContentPane(contentPane);								 
+							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+								 setContentPane(contentPane);
+							 }
+						}
+					});
+				} else {
+					readFile(generatedFile, FileGenerated);
+					setContentPane(contentPane);
+				}
+			}
+		});
 		pestania_2.add(bt_Ejecutar);
 		
 		bt_Mostrar = new JButton("MOSTRAR");
@@ -322,6 +356,36 @@ public class GUI extends JFrame{
 		bt_Mostrar.setBackground(Color.DARK_GRAY);
 		bt_Mostrar.setFont(new Font("Consolas", Font.BOLD, 12));
 		bt_Mostrar.setBounds(509, 11, 89, 23);
+		bt_Mostrar.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(xslFile == null){
+					ventana = new JPanel();
+					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
+					//------EL ARCHIVO /////////////////////////////////////////////	
+					archivoX = new JFileChooser();
+					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
+					ventana.add(archivoX);
+					setContentPane(ventana);
+					archivoX.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent arg0) {							
+							String command = arg0.getActionCommand();
+							 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
+								 xslFile = archivoX.getSelectedFile();
+								 readFile(xslFile, XSLT);
+								 setContentPane(contentPane);								 
+							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+								 setContentPane(contentPane);
+							 }
+						}
+					});
+				} else {
+					readFile(xslFile, XSLT);
+					setContentPane(contentPane);
+				}
+			}
+		});
 		pestania_2.add(bt_Mostrar);
 		
 
@@ -393,5 +457,68 @@ public class GUI extends JFrame{
 		pie.setBounds(786, 642, 105, 13);
 		contentPane.add(pie);
 
+	}
+	
+	public void readFile(File f, String typeFile) {
+		String text = "";
+		try {
+			Scanner scan = new Scanner(f);
+			while(scan.hasNextLine()){
+				text += scan.nextLine() + "\n";
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		switch(typeFile){
+			case "XML": {
+				textArea_XML.setText(text);
+				textArea_XML.setEditable(true);
+				if((doc = validator.XMLBienFormado(xmlFile.getAbsolutePath())) != null){									 
+					 textArea_XML_BienFormado.setText("CÓDIGO BIEN FORMADO !!!");
+					 chargeTree(doc);
+				 } else {
+					 textArea_XML_BienFormado.setForeground(Color.RED);
+					 textArea_XML_BienFormado.setText("CÓDIGO MAL FORMADO !!!");
+				 }
+			}
+				break;
+			case "XSLT": {
+				textArea_XSLT.setText(text);
+				textArea_XSLT.setEditable(true);
+			}
+				break;
+			case "GENERATED": {
+				textArea_XSLT.setText("FICHERO GENERADO\n\n" + text);
+				textArea_XSLT.setEditable(false);
+			}
+				break;
+		}
+		
+	}
+	
+	public void chargeTree(Document doc) {
+		NodeList nodes = doc.getChildNodes();
+		Node rootNode = nodes.item(0);
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode.getNodeName());
+		if(rootNode.hasChildNodes()){
+			chargeLeafs(rootNode, root);
+		}
+		tree = new JTree(root);
+		tree.setFont(new Font("Consolas", Font.PLAIN, 12));
+		tree.setBounds(10, 11, 163, 472);
+		panelJTree.add(tree);
+	}
+	
+	public void chargeLeafs(Node node, DefaultMutableTreeNode parent) {
+		NodeList nodes = node.getChildNodes();
+		for(int i = 0; i < nodes.getLength(); i++){
+			Node n = nodes.item(i);
+			DefaultMutableTreeNode nodeTree = new DefaultMutableTreeNode(n.getNodeName());
+			parent.add(nodeTree);
+			if(n.hasChildNodes()){
+				chargeLeafs(n, nodeTree);
+			}
+		}
 	}
 }
