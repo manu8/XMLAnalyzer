@@ -32,7 +32,6 @@ public class XMLValidator {
 			builder.setErrorHandler(new SimpleErrorHandler());
 
 			doc = builder.parse(new InputSource(documento));
-			System.out.println("El xml está bien formado");
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -46,7 +45,8 @@ public class XMLValidator {
 	 * Método que comprueba que el xml valida contra el DTD
 	 * @param documento Ruta del xml que queremos comprobar
 	 */
-	public void XmlDtd(String documento) {
+	public String XmlDtd(String documento) {
+		String message = "";
 		DocumentBuilderFactory factoria = DocumentBuilderFactory.newInstance();
 		factoria.setValidating(true);
 		factoria.setNamespaceAware(true);
@@ -62,24 +62,26 @@ public class XMLValidator {
 		builder.setErrorHandler(new SimpleErrorHandler());
 
 		try {
-			Document document = builder.parse(new InputSource(documento));
-			System.out.println("El archivo a validado correctamente frente al DTD");
+			builder.parse(new InputSource(documento));
+			message = "El archivo a validado correctamente frente al DTD";
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("El archivo no a validado frente al DTD");
+			message = "El archivo no a validado frente al DTD";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
-			System.out.println("No se encuentra el archivo");
+			message = "No se encuentra el archivo";
 		}
+		return message;
 	}
 
 	/**
 	 * Método que comprueba que el xml valida contra el XSD
 	 * @param documento Ruta del xml que queremos comprobar
 	 */
-	public void XmlSchema(String documento){
+	public String XmlSchema(String documento){
+		String message = "";
 		DocumentBuilderFactory factoria = DocumentBuilderFactory.newInstance();
 		factoria.setValidating(true);
 		factoria.setNamespaceAware(true);
@@ -98,15 +100,16 @@ public class XMLValidator {
 
 		try {
 			Document document = builder.parse(new InputSource(documento));
-			System.out.println("El documento ha validado correctamente frente al Schema");
+			message = "El documento ha validado correctamente frente al Schema";
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			System.out.println("El documento no ha validado correctamente frente al Schema");
+			message = "El documento no ha validado correctamente frente al Schema";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			System.out.println("Documento no encontrado");
+			message = "Documento no encontrado";
 		}
+		return message;
 	}
 }
