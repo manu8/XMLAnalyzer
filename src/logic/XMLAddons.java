@@ -1,7 +1,12 @@
 package logic;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -27,6 +32,12 @@ import net.sf.saxon.xqj.SaxonXQDataSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+/**
+ * Añade las funcionalidades de:
+ * - Ejecutar expresiones XPath
+ * - Transformar el documento XML usando una hoja de transformación XSLT
+ * @author Manuel Berrio Martín
+ */
 public class XMLAddons {
 	/**
 	 * Ejecuta una expresión XPath dentro del contexto de un documento XML
@@ -51,14 +62,16 @@ public class XMLAddons {
 		try {
 			XQConnection conn = ds.getConnection();
 			XQPreparedExpression expr = conn.prepareExpression(expression);
-			expr.bindNode(XQConstants.CONTEXT_ITEM, document, null);
+			XMLInputFactory factory = XMLInputFactory.newInstance();
+			XMLStreamReader streamReader = factory.createXMLStreamReader(new FileReader((File) document));
+			expr.bindDocument(XQConstants.CONTEXT_ITEM, streamReader, conn.createDocumentType());
 			XQSequence rs = expr.executeQuery();
 			System.out.println(rs.getSequenceAsString(null));
 			rs.close();
 			conn.close();
 			expr.close();
 			conn.close();
-		} catch (XQException e1) {
+		} catch (XQException | FileNotFoundException | XMLStreamException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -95,6 +108,6 @@ public class XMLAddons {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return (File) out;
+		return new File(outpath);
 	}
 }
