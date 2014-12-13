@@ -13,7 +13,6 @@ import org.xml.sax.SAXException;
 /**
  * Validador del documento XML, provee acceso a dicho documento
  * @author Jose María Pérez Maroto
- *
  */
 public class XMLValidator {
 	/**

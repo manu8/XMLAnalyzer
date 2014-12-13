@@ -26,7 +26,6 @@ import javax.swing.JTabbedPane;
 /**
  * Provee de la interfaz de usuario
  * @author Andrés Moreno Aguilar
- *
  */
 public class GUI extends JFrame{
 	
