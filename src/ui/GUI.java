@@ -42,7 +42,8 @@ import logic.XMLValidator;
 public class GUI extends JFrame{
 	private final String XML = "XML";
 	private final String XSLT = "XSLT";
-	private final String FileGenerated = "GENERATED";
+	private final String GENERATEDFILE = "GENERATED";
+	private final String XQ = "XQ";
 	
 	//ATRIBUTOS*****************
 	private JPanel contentPane;
@@ -84,27 +85,23 @@ public class GUI extends JFrame{
 	private JButton bt_EjecutarXquery;
 	private JButton bt_CargarXquery;
 	
-	private JLabel pie;
-	
+	private JLabel pie;	
 
 	private File xmlFile = new File("assets\\samples\\contacts.xml");
 	private File xslFile = new File("assets\\samples\\Stylesheet.xsl");
 	private File generatedFile;
 	private final  XMLValidator validator = new XMLValidator();
+	private File xqFile;
 	private Document doc;
-
-
 	
 	//CONSTRUCTOR*************
 	public GUI() {
-		//-------------------------
 		
 		//PANEL CONTENEDOR
 		contentPane = new JPanel();
 		contentPane.setBounds(0, 0, 934, 661);
 		contentPane.setBackground(Color.DARK_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
@@ -124,8 +121,7 @@ public class GUI extends JFrame{
 		contentPane.add(panelJTree);
 		panelJTree.setLayout(null);		
 		
-//***************** BOTONES GRANDES *******************		
-
+//***************** BOTONES GRANDES *******************
 		
 		//BOTÓN CARGAR XML////////////////////////////////////////////////////////
 		bt_XML = new JButton("");
@@ -198,10 +194,7 @@ public class GUI extends JFrame{
 				}
 			}
 		});
-		contentPane.add(bt_XSD);
-		
-
-		
+		contentPane.add(bt_XSD);		
 		
 //***************** PESTAÑAS *******************		
 		//PANEL PESTAÑAS
@@ -253,8 +246,7 @@ public class GUI extends JFrame{
 		scrollPane_XML = new JScrollPane();
 		scrollPane_XML.setBounds(25, 56, 573, 305);
 		scrollPane_XML.setViewportView(textArea_XML); //Añadir el Scroll al TextArea
-		pestania_1.add(scrollPane_XML);
-		
+		pestania_1.add(scrollPane_XML);		
 			
 		textArea_XML_BienFormado = new JTextArea();
 		textArea_XML_BienFormado.setEditable(false);
@@ -263,8 +255,7 @@ public class GUI extends JFrame{
 		textArea_XML_BienFormado.setFont(new Font("Consolas", Font.BOLD, 16));
 		textArea_XML_BienFormado.setBounds(21, 366, 579, 68);
 		textArea_XML_BienFormado.setMargin(new Insets(25, 50, 10, 10)); //margen de alrededor
-		pestania_1.add(textArea_XML_BienFormado);
-		
+		pestania_1.add(textArea_XML_BienFormado);		
 		
 		//--PESTAÑA 2************
 		pestania_2 = new JPanel();
@@ -302,8 +293,7 @@ public class GUI extends JFrame{
 					e.printStackTrace();
 				}
 			}
-		});
-		
+		});		
 		
 		bt_Editar.setForeground(Color.WHITE);
 		bt_Editar.setFont(new Font("Consolas", Font.BOLD, 12));
@@ -336,7 +326,7 @@ public class GUI extends JFrame{
 								 String outpath = "";
 								 outpath = archivoX.getSelectedFile().getAbsolutePath(); 
 								 generatedFile = XMLAddons.transformXMLWithXSLT(xslFile.getAbsolutePath(), outpath, doc);
-								 readFile(generatedFile, FileGenerated);
+								 readFile(generatedFile, GENERATEDFILE);
 								 setContentPane(contentPane);								 
 							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
 								 setContentPane(contentPane);
@@ -344,7 +334,7 @@ public class GUI extends JFrame{
 						}
 					});
 				} else {
-					readFile(generatedFile, FileGenerated);
+					readFile(generatedFile, GENERATEDFILE);
 					setContentPane(contentPane);
 				}
 			}
@@ -388,8 +378,6 @@ public class GUI extends JFrame{
 		});
 		pestania_2.add(bt_Mostrar);
 		
-
-		
 		//--PESTAÑA 3************
 		pestania_3 = new JPanel();
 		pestania_3.setBackground(new Color(154, 205, 50));
@@ -398,7 +386,7 @@ public class GUI extends JFrame{
 		
 		textArea_Expresiones = new JTextArea();
 		textArea_Expresiones.setBounds(28, 69, 570, 359);
-		textArea_Expresiones.setText("Aquí mostramos el código...");
+		textArea_Expresiones.setText("Escriba aquí una exprsión XPath, xQuery o carge un fichero xQuery...");
 		textArea_Expresiones.setFont(new Font("Consolas", Font.PLAIN, 15));
 		textArea_Expresiones.setMargin(new Insets(10, 10, 10, 10)); //margen de alrededor
 		textArea_Expresiones.setLineWrap(true); // q baje para abajo cuando llegues al final
@@ -408,8 +396,7 @@ public class GUI extends JFrame{
 		scrollPane_Expresiones = new JScrollPane();
 		scrollPane_Expresiones.setBounds(28, 69, 570, 359);
 		scrollPane_Expresiones.setViewportView(textArea_Expresiones); //Añadir el Scroll al TextArea
-		pestania_3.add(scrollPane_Expresiones);
-		
+		pestania_3.add(scrollPane_Expresiones);		
 		
 		//--BOTON EJECUTAR PATH
 		bt_EjecutarXpath = new JButton("EJECUTAR XPath");
@@ -417,6 +404,30 @@ public class GUI extends JFrame{
 		bt_EjecutarXpath.setForeground(Color.WHITE);
 		bt_EjecutarXpath.setBackground(Color.DARK_GRAY);
 		bt_EjecutarXpath.setFont(new Font("Consolas", Font.BOLD, 12));
+		bt_EjecutarXpath.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String expr = textArea_Expresiones.getText();
+				if(expr != ""){
+					DefaultMutableTreeNode root = new DefaultMutableTreeNode("RESULTADO");
+					tree = new JTree(root);
+					tree.setFont(new Font("Consolas", Font.PLAIN, 12));
+					tree.setBounds(10, 11, 163, 472);
+					NodeList nodes = null;
+					if(doc != null){
+						nodes = XMLAddons.executeXPathExpression(expr, doc);
+					} else {
+						textArea_Expresiones.setText("DEBE CARGAR UN DOCUMENTO !!!");
+					}					
+					for(int i = 0; i < nodes.getLength(); i++){
+						chargeLeafs(nodes.item(i), root);
+					}
+					panelJTree.removeAll();
+					panelJTree.add(tree);
+					setContentPane(contentPane);
+				}
+			}
+		});
 		pestania_3.add(bt_EjecutarXpath);
 		
 		//--BOTON EJECUTAR XQUERY
@@ -425,6 +436,14 @@ public class GUI extends JFrame{
 		bt_EjecutarXquery.setForeground(Color.WHITE);
 		bt_EjecutarXquery.setBackground(Color.DARK_GRAY);
 		bt_EjecutarXquery.setFont(new Font("Consolas", Font.BOLD, 12));
+		bt_EjecutarXquery.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String expr = textArea_Expresiones.getText();
+				String result = XMLAddons.executeXQueryExpresion(expr, xmlFile);
+				textArea_Expresiones.setText(result);
+			}
+		});
 		pestania_3.add(bt_EjecutarXquery);
 		
 		//--BOTON EJECUTAR CARGAR XQUERY
@@ -433,22 +452,41 @@ public class GUI extends JFrame{
 		bt_CargarXquery.setForeground(Color.WHITE);
 		bt_CargarXquery.setBackground(Color.DARK_GRAY);
 		bt_CargarXquery.setFont(new Font("Consolas", Font.BOLD, 12));
-		pestania_3.add(bt_CargarXquery);
-		
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		bt_CargarXquery.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(xmlFile == null){
+					textArea_Expresiones.setText("DEBE CARGAR UN DOCUMENTO !!!");
+				} else {
+					if(xqFile == null){
+						ventana = new JPanel();
+						ventana.setBounds(getX(), getY(), getWidth(), getHeight());
+						//------EL ARCHIVO /////////////////////////////////////////////	
+						archivoX = new JFileChooser();
+						archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
+						ventana.add(archivoX);
+						setContentPane(ventana);
+						archivoX.addActionListener(new ActionListener() {						
+							@Override
+							public void actionPerformed(ActionEvent arg0) {							
+								String command = arg0.getActionCommand();
+								 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
+									 xqFile = archivoX.getSelectedFile();
+									 readFile(xqFile, XQ);
+									 setContentPane(contentPane);								 
+								 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+									 setContentPane(contentPane);
+								 }
+							}
+						});
+					} else {
+						readFile(xqFile, XQ);
+						setContentPane(contentPane);
+					}
+				}				
+			}
+		});
+		pestania_3.add(bt_CargarXquery);		
 		
 		//--PIE
 		pie = new JLabel("2\u00BA DAM  |  2014");
@@ -456,9 +494,13 @@ public class GUI extends JFrame{
 		pie.setForeground(new Color(154, 205, 50));
 		pie.setBounds(786, 642, 105, 13);
 		contentPane.add(pie);
-
 	}
 	
+	/**
+	 * Lee un fichero y muestra el resultado en un textarea distinto, dependiendo del tipo de fichero a leer
+	 * @param f - Fichero a leer
+	 * @param typeFile - Tipo de fichero a leer
+	 */
 	public void readFile(File f, String typeFile) {
 		String text = "";
 		try {
@@ -493,10 +535,17 @@ public class GUI extends JFrame{
 				textArea_XSLT.setEditable(false);
 			}
 				break;
+			case "XQ": {
+				textArea_Expresiones.setText(text);
+			}
 		}
 		
 	}
 	
+	/**
+	 * Carga el árbol de nodos de un documento XML
+	 * @param doc - Documento XML a cargar
+	 */
 	public void chargeTree(Document doc) {
 		NodeList nodes = doc.getChildNodes();
 		Node rootNode = nodes.item(0);
@@ -507,14 +556,24 @@ public class GUI extends JFrame{
 		tree = new JTree(root);
 		tree.setFont(new Font("Consolas", Font.PLAIN, 12));
 		tree.setBounds(10, 11, 163, 472);
+		panelJTree.removeAll();
 		panelJTree.add(tree);
 	}
 	
+	/**
+	 * Carga los elementos hijos de un nodo (RECURSIVO)
+	 * @param node - Nodo padre a cargar
+	 * @param parent - Nodo del árbol sobre el que cargar la estructura
+	 */
 	public void chargeLeafs(Node node, DefaultMutableTreeNode parent) {
 		NodeList nodes = node.getChildNodes();
 		for(int i = 0; i < nodes.getLength(); i++){
 			Node n = nodes.item(i);
-			DefaultMutableTreeNode nodeTree = new DefaultMutableTreeNode(n.getNodeName());
+			String name = n.getNodeName();
+			if(name.contains("#text")){
+				name = n.getTextContent();
+			}
+			DefaultMutableTreeNode nodeTree = new DefaultMutableTreeNode(name);
 			parent.add(nodeTree);
 			if(n.hasChildNodes()){
 				chargeLeafs(n, nodeTree);
