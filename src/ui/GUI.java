@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -41,7 +42,7 @@ import logic.XMLValidator;
  */
 public class GUI extends JFrame{
 	private final String XML = "XML";
-	private final String XSLT = "XSLT";
+	private final String XSLT = "XSL";
 	private final String GENERATEDFILE = "GENERATED";
 	private final String XQ = "XQ";
 	
@@ -94,6 +95,49 @@ public class GUI extends JFrame{
 	private File xqFile;
 	private Document doc;
 	
+	private FileFilter xml = new FileFilter() {						
+		@Override
+		public String getDescription() {
+			return "*.xml";
+		}						
+		@Override
+		public boolean accept(File f) {
+			if(f.getName().equalsIgnoreCase(XML) || f.isDirectory()){
+				return true;
+			}
+			return false;
+		}
+	};
+	private FileFilter xsl = new FileFilter() {
+		@Override
+		public boolean accept(File arg0) {
+			if(arg0.getName().equalsIgnoreCase(XSLT) || arg0.isDirectory()){
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public String getDescription() {
+			return "*.xsl";
+		}		
+	};
+	private FileFilter xq = new FileFilter() {
+		@Override
+		public boolean accept(File f) {
+			if(f.getName().equalsIgnoreCase(XQ) || f.isDirectory()){
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public String getDescription() {
+			return "*.xq";
+		}
+		
+	};
+	
 	//CONSTRUCTOR*************
 	public GUI() {
 		
@@ -132,6 +176,7 @@ public class GUI extends JFrame{
 					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
 					//------EL ARCHIVO /////////////////////////////////////////////	
 					archivoX = new JFileChooser();
+					archivoX.setFileFilter(xml);
 					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
 					ventana.add(archivoX);
 					setContentPane(ventana);
@@ -151,8 +196,7 @@ public class GUI extends JFrame{
 				} else {
 					readFile(xmlFile, XML);
 					setContentPane(contentPane);
-				}
-				
+				}			
 			}
 		});
 		bt_XML.setSelectedIcon(new ImageIcon("assets\\img\\bt1-2.jpg"));
@@ -223,16 +267,37 @@ public class GUI extends JFrame{
 		bt_Guardar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String text = textArea_XML.getText();
-				try {
-					PrintWriter writer = new PrintWriter(xmlFile);
-					writer.print(text);
-					writer.close();
-					readFile(xmlFile, XML);
-					setContentPane(contentPane);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(xmlFile == null){
+					ventana = new JPanel();
+					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
+					//------EL ARCHIVO /////////////////////////////////////////////	
+					archivoX = new JFileChooser();
+					archivoX.setFileFilter(xml);
+					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
+					ventana.add(archivoX);
+					setContentPane(ventana);
+					archivoX.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent arg0) {							
+							String command = arg0.getActionCommand();
+							 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
+								 xmlFile = archivoX.getSelectedFile();
+								 String text = textArea_XML.getText();
+									try {
+										PrintWriter writer = new PrintWriter(xmlFile);
+										writer.print(text);
+										writer.close();
+										readFile(xmlFile, XML);
+										setContentPane(contentPane);
+									} catch (FileNotFoundException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+								 setContentPane(contentPane);
+							 }
+						}
+					});
 				}
 			}
 		});		
@@ -281,16 +346,37 @@ public class GUI extends JFrame{
 		bt_Editar.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String text = textArea_XSLT.getText();
-				try {
-					PrintWriter writer = new PrintWriter(xslFile);
-					writer.print(text);
-					writer.close();
-					readFile(xslFile, XSLT);
-					setContentPane(contentPane);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(xslFile == null){
+					ventana = new JPanel();
+					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
+					//------EL ARCHIVO /////////////////////////////////////////////	
+					archivoX = new JFileChooser();
+					archivoX.setFileFilter(xsl);
+					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
+					ventana.add(archivoX);
+					setContentPane(ventana);
+					archivoX.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent arg0) {							
+							String command = arg0.getActionCommand();
+							 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
+								 xslFile = archivoX.getSelectedFile();
+								 String text = textArea_XSLT.getText();
+									try {
+										PrintWriter writer = new PrintWriter(xslFile);
+										writer.print(text);
+										writer.close();
+										readFile(xslFile, XSLT);
+										setContentPane(contentPane);
+									} catch (FileNotFoundException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}								 
+							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+								 setContentPane(contentPane);
+							 }
+						}
+					});
 				}
 			}
 		});		
@@ -354,6 +440,7 @@ public class GUI extends JFrame{
 					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
 					//------EL ARCHIVO /////////////////////////////////////////////	
 					archivoX = new JFileChooser();
+					archivoX.setFileFilter(xsl);
 					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
 					ventana.add(archivoX);
 					setContentPane(ventana);
@@ -463,6 +550,7 @@ public class GUI extends JFrame{
 						ventana.setBounds(getX(), getY(), getWidth(), getHeight());
 						//------EL ARCHIVO /////////////////////////////////////////////	
 						archivoX = new JFileChooser();
+						archivoX.setFileFilter(xq);
 						archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
 						ventana.add(archivoX);
 						setContentPane(ventana);
@@ -530,7 +618,7 @@ public class GUI extends JFrame{
 				 }
 			}
 				break;
-			case "XSLT": {
+			case "XSL": {
 				textArea_XSLT.setText(text);
 				textArea_XSLT.setEditable(true);
 			}
