@@ -293,22 +293,22 @@ public class GUI extends JFrame{
 							String command = arg0.getActionCommand();
 							 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
 								 xmlFile = archivoX.getSelectedFile();
-								 String text = textArea_XML.getText();
-									try {
-										PrintWriter writer = new PrintWriter(xmlFile);
-										writer.print(text);
-										writer.close();
-										readFile(xmlFile, XML);
-										setContentPane(contentPane);
-									} catch (FileNotFoundException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
 							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
 								 setContentPane(contentPane);
 							 }
 						}
 					});
+				}
+				try {
+					String text = textArea_XML.getText();
+					PrintWriter writer = new PrintWriter(xmlFile);
+					writer.print(text);
+					writer.close();
+					readFile(xmlFile, XML);
+					setContentPane(contentPane);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		});		
