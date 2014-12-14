@@ -1,4 +1,4 @@
-XMLSpy
+XMLAnalyzer
 ======
 
 XML Validator App 
