@@ -1,5 +1,7 @@
 package test;
 
+import java.io.File;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -17,6 +19,6 @@ public class XMLAddonsTest {
 		
 		XMLAddons.transformXMLWithXSLT("assets/samples/Stylesheet.xsl", "src/test/Generated Files/generated.html", doc);
 		
-		XMLAddons.executeXQueryExpresion("for $contact in doc('assets/contacts.xml')/contacts/contact where $contact/firstname == 'Edwin' return $contact/lastname", doc);
+		XMLAddons.executeXQueryExpresion("for $contact in doc('assets/contacts.xml')/contacts/contact where $contact/firstname == 'Edwin' return $contact/lastname", new File("assets/samples/document.xml"));
 	}
 }
