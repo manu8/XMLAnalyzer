@@ -371,23 +371,27 @@ public class GUI extends JFrame{
 						public void actionPerformed(ActionEvent arg0) {							
 							String command = arg0.getActionCommand();
 							 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
-								 xslFile = archivoX.getSelectedFile();
-								 String text = textArea_XSLT.getText();
-									try {
-										PrintWriter writer = new PrintWriter(xslFile);
-										writer.print(text);
-										writer.close();
-										readFile(xslFile, XSLT);
-										setContentPane(contentPane);
-									} catch (FileNotFoundException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}								 
+								 xslFile = archivoX.getSelectedFile();								 							 
 							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
 								 setContentPane(contentPane);
 							 }
 						}
 					});
+				}
+				String text = textArea_XSLT.getText();
+				if(text != "" && text != "Aquí mostramos el código XSLT..." && text != "DEBE REALIZAR ALGÚN CAMBIO !!!"){
+					try {
+						PrintWriter writer = new PrintWriter(xslFile);
+						writer.print(text);
+						writer.close();
+						readFile(xslFile, XSLT);
+						setContentPane(contentPane);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				} else {
+					textArea_XSLT.setText("DEBE REALIZAR ALGÚN CAMBIO !!!");
 				}
 			}
 		});		
@@ -406,6 +410,50 @@ public class GUI extends JFrame{
 		bt_Ejecutar.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(xmlFile == null){
+					ventana = new JPanel();
+					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
+					//------EL ARCHIVO /////////////////////////////////////////////	
+					archivoX = new JFileChooser();
+					archivoX.setFileFilter(xml);
+					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
+					ventana.add(archivoX);
+					setContentPane(ventana);
+					archivoX.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent arg0) {							
+							String command = arg0.getActionCommand();
+							 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
+								 xmlFile = archivoX.getSelectedFile();
+								 readFile(xmlFile, XML);
+								 setContentPane(contentPane);								 
+							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+								 setContentPane(contentPane);
+							 }
+						}
+					});
+				}
+				if(xslFile == null){
+					ventana = new JPanel();
+					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
+					//------EL ARCHIVO /////////////////////////////////////////////	
+					archivoX = new JFileChooser();
+					archivoX.setFileFilter(xsl);
+					archivoX.setBounds(getX(), getY(), getWidth() - 50, getHeight() - 50);
+					ventana.add(archivoX);
+					setContentPane(ventana);
+					archivoX.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent arg0) {							
+							String command = arg0.getActionCommand();
+							 if(command.equals(JFileChooser.APPROVE_SELECTION)){								 
+								 xslFile = archivoX.getSelectedFile();								 							 
+							 }else if (command.equals(JFileChooser.CANCEL_SELECTION)){
+								 setContentPane(contentPane);
+							 }
+						}
+					});
+				}
 				if(generatedFile == null){
 					ventana = new JPanel();
 					ventana.setBounds(getX(), getY(), getWidth(), getHeight());
