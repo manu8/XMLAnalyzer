@@ -9,4 +9,8 @@ public class Application implements Runnable {
 	public void run() {
 		new GUI();
 	}
+	
+	public static void main(String[] args) {
+		new Application().run();
+	}
 }
