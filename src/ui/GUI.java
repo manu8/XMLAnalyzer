@@ -215,10 +215,16 @@ public class GUI extends JFrame{
 		bt_DTD.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				textArea_XML_BienFormado.setText(validator.XmlDtd(xmlFile.getAbsolutePath()));
-				if(textArea_XML_BienFormado.getText().contains("no")){
+				if(xmlFile != null){
+					textArea_XML_BienFormado.setText(validator.XmlDtd(xmlFile.getAbsolutePath()));
+					if(textArea_XML_BienFormado.getText().contains("no")){
+						textArea_XML_BienFormado.setForeground(Color.RED);
+					}
+				} else {
 					textArea_XML_BienFormado.setForeground(Color.RED);
+					textArea_XML_BienFormado.setText("DEBE CARGAR UN DOCUMENTO !!!");
 				}
+				
 			}
 		});
 		contentPane.add(bt_DTD);
@@ -229,13 +235,18 @@ public class GUI extends JFrame{
 		bt_XSD.setBackground(new Color(154, 205, 50));
 		bt_XSD.setBounds(792, 23, 99, 89);
 		bt_XSD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		bt_DTD.addActionListener(new ActionListener() {			
+		bt_XSD.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				textArea_XML_BienFormado.setText(validator.XmlSchema(xmlFile.getAbsolutePath()));
-				if(textArea_XML_BienFormado.getText().contains("no")){
+				if(xmlFile != null){
+					textArea_XML_BienFormado.setText(validator.XmlSchema(xmlFile.getAbsolutePath()));
+					if(textArea_XML_BienFormado.getText().contains("no")){
+						textArea_XML_BienFormado.setForeground(Color.RED);
+					}
+				} else  {
 					textArea_XML_BienFormado.setForeground(Color.RED);
-				}
+					textArea_XML_BienFormado.setText("DEBE CARGAR UN DOCUMENTO !!!");
+				}				
 			}
 		});
 		contentPane.add(bt_XSD);		
