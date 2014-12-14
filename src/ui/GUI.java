@@ -87,8 +87,8 @@ public class GUI extends JFrame{
 	
 	private JLabel pie;	
 
-	private File xmlFile = new File("assets\\samples\\contacts.xml");
-	private File xslFile = new File("assets\\samples\\Stylesheet.xsl");
+	private File xmlFile;
+	private File xslFile;
 	private File generatedFile;
 	private final  XMLValidator validator = new XMLValidator();
 	private File xqFile;
@@ -494,6 +494,11 @@ public class GUI extends JFrame{
 		pie.setForeground(new Color(154, 205, 50));
 		pie.setBounds(786, 642, 105, 13);
 		contentPane.add(pie);
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
+		setSize(950, 730);
+		setResizable(false);
 	}
 	
 	/**

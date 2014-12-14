@@ -13,10 +13,6 @@ public class GUITest {
 			public void run() {
 				try {
 					GUI frame = new GUI();
-					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					frame.setVisible(true);
-					frame.setSize(950, 730);
-					frame.setResizable(false);
 					
 				} catch (Exception e) {
 					e.printStackTrace();
