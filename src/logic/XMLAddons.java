@@ -57,16 +57,23 @@ public class XMLAddons {
 		return nodes;
 	}
 	
-	public static void executeXQueryExpresion(String expression, Document document) {
+	/**
+	 * Ejecuta una expresión xQuery
+	 * @param expression - Expresión xQuery
+	 * @param f - Fichero XML al que ejecutar la expresión xQuery
+	 * @return String con el resultado de la expresión
+	 */
+	public static String executeXQueryExpresion(String expression, File f) {
 		XQDataSource ds = new SaxonXQDataSource();
+		String result = null;
 		try {
 			XQConnection conn = ds.getConnection();
 			XQPreparedExpression expr = conn.prepareExpression(expression);
 			XMLInputFactory factory = XMLInputFactory.newInstance();
-			XMLStreamReader streamReader = factory.createXMLStreamReader(new FileReader((File) document));
+			XMLStreamReader streamReader = factory.createXMLStreamReader(new FileReader(f));
 			expr.bindDocument(XQConstants.CONTEXT_ITEM, streamReader, conn.createDocumentType());
 			XQSequence rs = expr.executeQuery();
-			System.out.println(rs.getSequenceAsString(null));
+			result = rs.getSequenceAsString(null);
 			rs.close();
 			conn.close();
 			expr.close();
@@ -75,6 +82,7 @@ public class XMLAddons {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		return result;
 	}
 	
 	/**
