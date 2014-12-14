@@ -102,7 +102,7 @@ public class GUI extends JFrame{
 		}						
 		@Override
 		public boolean accept(File f) {
-			if(f.getName().equalsIgnoreCase(XML) || f.isDirectory()){
+			if(f.getName().toUpperCase().contains(XML) || f.isDirectory()){
 				return true;
 			}
 			return false;
@@ -111,7 +111,7 @@ public class GUI extends JFrame{
 	private FileFilter xsl = new FileFilter() {
 		@Override
 		public boolean accept(File arg0) {
-			if(arg0.getName().equalsIgnoreCase(XSLT) || arg0.isDirectory()){
+			if(arg0.getName().toUpperCase().contains(XSLT) || arg0.isDirectory()){
 				return true;
 			}
 			return false;
@@ -125,7 +125,7 @@ public class GUI extends JFrame{
 	private FileFilter xq = new FileFilter() {
 		@Override
 		public boolean accept(File f) {
-			if(f.getName().equalsIgnoreCase(XQ) || f.isDirectory()){
+			if(f.getName().toUpperCase().contains(XQ) || f.isDirectory()){
 				return true;
 			}
 			return false;
@@ -652,10 +652,9 @@ public class GUI extends JFrame{
 	 */
 	public void chargeTree(Document doc) {
 		NodeList nodes = doc.getChildNodes();
-		Node rootNode = nodes.item(0);
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode.getNodeName());
-		if(rootNode.hasChildNodes()){
-			chargeLeafs(rootNode, root);
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("DOCUMENTO");
+		for(int i = 0; i < nodes.getLength(); i++){
+			chargeLeafs(nodes.item(i), root);
 		}
 		tree = new JTree(root);
 		tree.setFont(new Font("Consolas", Font.PLAIN, 12));
@@ -677,8 +676,11 @@ public class GUI extends JFrame{
 			if(name.contains("#text")){
 				name = n.getTextContent();
 			}
-			DefaultMutableTreeNode nodeTree = new DefaultMutableTreeNode(name);
-			parent.add(nodeTree);
+			DefaultMutableTreeNode nodeTree = null;
+			if(!name.contains("\n") || !name.contains("")){
+				nodeTree = new DefaultMutableTreeNode(name);
+				parent.add(nodeTree);
+			}			
 			if(n.hasChildNodes()){
 				chargeLeafs(n, nodeTree);
 			}
